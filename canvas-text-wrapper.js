@@ -12,8 +12,10 @@
       textAlign: 'left',
       verticalAlign: 'top',
       justifyLines: false,
-      paddingX: 0,
-      paddingY: 0,
+      paddingLeft: 0,
+      paddingRight: 0,
+      paddingTop: 0,
+      paddingBottom: 0,
       fitParent: false,
       strokeText: false,
       renderHDPI: true,
@@ -64,8 +66,8 @@
 
     var EL_WIDTH = (!opts.fitParent ? canvas.width : canvas.parentNode.clientWidth) / scale;
     var EL_HEIGHT = (!opts.fitParent ? canvas.height : canvas.parentNode.clientHeight) / scale;
-    var MAX_TXT_WIDTH = EL_WIDTH - (opts.paddingX * 2);
-    var MAX_TXT_HEIGHT = EL_HEIGHT - (opts.paddingY * 2);
+    var MAX_TXT_WIDTH = EL_WIDTH - (opts.paddingLeft + opts.paddingRight);
+    var MAX_TXT_HEIGHT = EL_HEIGHT - (opts.paddingTop + opts.paddingBottom);
 
     var fontSize = opts.font.match(/\d+(px|em|%)/g) ? +opts.font.match(/\d+(px|em|%)/g)[0].match(/\d+/g) : 18;
     var textBlockHeight = 0;
@@ -264,21 +266,23 @@
       context.textAlign = opts.textAlign;
 
       if (opts.textAlign == 'center') {
-        textPos.x = EL_WIDTH / 2;
+        textPos.x = (EL_WIDTH + opts.paddingLeft - opts.paddingRight) / 2;
       } else if (opts.textAlign == 'right') {
-        textPos.x = EL_WIDTH - opts.paddingX;
+        textPos.x = EL_WIDTH - opts.paddingRight;
       } else {
-        textPos.x = opts.paddingX;
+        textPos.x = opts.paddingLeft;
       }
     }
 
     function setVertAlign() {
       if (opts.verticalAlign == 'middle') {
-        textPos.y = (EL_HEIGHT - textBlockHeight) / 2;
+        const vertGapSize = EL_HEIGHT - opts.paddingTop - opts.paddingBottom;
+        const vertMidPoint = opts.paddingTop + vertGapSize / 2;
+        textPos.y = vertMidPoint - textBlockHeight / 2;
       } else if (opts.verticalAlign == 'bottom') {
-        textPos.y = EL_HEIGHT - textBlockHeight - opts.paddingY;
+        textPos.y = EL_HEIGHT - textBlockHeight - opts.paddingBottom;
       } else {
-        textPos.y = opts.paddingY;
+        textPos.y = opts.paddingTop;
       }
     }
 
@@ -301,11 +305,17 @@
       if (typeof opts.justifyLines !== 'boolean')
         throw new TypeError('Property "justifyLines" must be a Boolean.');
 
-      if (isNaN(opts.paddingX))
-        throw new TypeError('Property "paddingX" must be a Number.');
+      if (isNaN(opts.paddingLeft))
+        throw new TypeError('Property "paddingLeft" must be a Number.');
 
-      if (isNaN(opts.paddingY))
-        throw new TypeError('Property "paddingY" must be a Number.');
+      if (isNaN(opts.paddingRight))
+        throw new TypeError('Property "paddingRight" must be a Number.');
+
+      if (isNaN(opts.paddingTop))
+        throw new TypeError('Property "paddingTop" must be a Number.');
+
+      if (isNaN(opts.paddingBottom))
+        throw new TypeError('Property "paddingBottom" must be a Number.');
 
       if (typeof opts.fitParent !== 'boolean')
         throw new TypeError('Property "fitParent" must be a Boolean.');
