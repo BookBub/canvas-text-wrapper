@@ -337,9 +337,5 @@
     }
   }
 
-  if ('module' in root && 'exports' in module) {
-    module.exports = CanvasTextWrapper;
-  } else {
-    root.CanvasTextWrapper = CanvasTextWrapper;
-  }
+  module.exports = CanvasTextWrapper;
 })(this);
